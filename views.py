@@ -1,5 +1,6 @@
-from datetime import datetime
 import asyncio
+import os
+from datetime import datetime
 
 import asyncpg
 from sanic.response import json
@@ -7,15 +8,19 @@ from sanic.views import HTTPMethodView
 from sanic_openapi import doc
 
 
+def connectdb():
+    return asyncpg.connect(
+        host=os.environ.get('DATABASE_URL', 'localhost'),
+        database=os.environ.get('DATABASE_NAME', 'syrup'),
+        user=os.environ.get('DATABASE_USER', 'postgres'),
+        password=os.environ.get('DATABASE_PASS', 'postgres')
+    )
+
 def mock_account_instance(name='test', amount=0):
     return {
         'name': name,
         'amount': amount
     }
-
-def connectdb():
-    return asyncpg.connect(user='postgres', password='postgres',
-        database='syrup', host='localhost')
 
 async def create_transaction(memo, amount, category):
     conn = await connectdb()
@@ -74,7 +79,6 @@ async def transaction(request):
             'message': 'added {0} transaction instance'.format(count),
             'data': request.json
         })
-
 
 async def transaction_instance(request, pk):
     if request.method == 'GET':

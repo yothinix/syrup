@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import asyncpg
 from sanic import Sanic
 from sanic_openapi import swagger_blueprint, openapi_blueprint
 
