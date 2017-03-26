@@ -23,4 +23,9 @@ app.add_route(transaction, '/transaction/', methods=['GET', 'PATCH', 'POST'])
 #app.add_route(account, '/account/', methods=['GET', 'POST'])
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(
+        host='0.0.0.0',
+        port=os.environ.get('APP_PORT', 8000),
+        debug=True
+    )
+
