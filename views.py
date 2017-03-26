@@ -4,20 +4,8 @@ import asyncio
 import asyncpg
 from sanic.response import json
 from sanic.views import HTTPMethodView
+from sanic_openapi import doc
 
-
-def mock_transaction_instance(
-    memo=None, amount=0, category=None, timestamp=None
-):
-    if not timestamp:
-        timestamp=datetime.now().isoformat()
-
-    return {
-        'memo': memo,
-        'amount': amount,
-        'category': category,
-        'timestamp': timestamp
-    }
 
 def mock_account_instance(name='test', amount=0):
     return {
@@ -42,9 +30,17 @@ def transaction_serializer(instance):
         'id': instance['id'],
         'memo': instance['memo'],
         'amount': instance['amount'],
+        'category': instance['category'],
         'timestamp': instance['timestamp'].isoformat(),
     }
 
+class Transaction:
+    memo = doc.String('Description for this transaction')
+    amount = doc.Integer('A cost of this transaction')
+    category = doc.String('Category for this transaction')
+
+@doc.summary('Transactions API')
+@doc.produces(Transaction)
 async def transaction(request):
     if request.method == 'GET':
         conn = await connectdb()
